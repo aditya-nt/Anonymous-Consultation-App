@@ -5,6 +5,7 @@ class ChatListItem extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            id : this.props.id,
             val : this.props.val
         }
     }
@@ -16,7 +17,8 @@ class ChatListItem extends Component {
 
     handleClick = () => {
         var va = this.state.val;
-        this.props.onClick(va);
+        var id = this.state.id;
+        this.props.onClick(va,id);
     }
 
     render() {
