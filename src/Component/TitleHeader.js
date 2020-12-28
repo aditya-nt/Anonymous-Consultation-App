@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
-import { Row } from "react-bootstrap";
+import { Row , Button} from "react-bootstrap";
 
 
 class TitleHeader extends Component {
-    constructor(props){
-        super(props);
-    }
+    
     render() {
         return (
-            <Row style={{ "display": "grid" }}><h2 style={{ "textAlign": "center" }}>
-                Kaaya 
+            <Row style={{ "position": "relative",display : 'grid' }}><h2 style={{ "textAlign": "center" }}>
+                KAAYA
                 
-          </h2></Row>
+          </h2>
+          
+          <Button variant="outline-secondary" style={{position : 'absolute', right : '15px'}}>Unlock</Button>
+          </Row>
         );
     }
 }

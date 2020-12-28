@@ -1,49 +1,68 @@
 import React, { useState } from "react";
-import { Button, Modal , Form } from "react-bootstrap";
+import { Button, Modal, Form } from "react-bootstrap";
 
 function Example(props) {
     const [show, setShow] = useState(false);
+    const [roomName,setRoomName] = useState('Invalid');
+    const [roomPassword,setRoomPassword] = useState('Invalid');
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
+    const handleSaveChanges = () => {
+        // console.log("2");
+        props.onCreateRoom(roomName,roomPassword);
+        handleClose();
+    }
+
+    const handleChangeRoomName = (e) => { 
+        const target = e.target;
+        const value = target.value;
+        setRoomName(value)
+      };
+
+      const handleChangeRoomPassword = (e) => { 
+        const target = e.target;
+        const value = target.value;
+        setRoomPassword(value)
+      };
+      
+
     return (
         <>
-            <Button variant="primary" onClick={handleShow}>
-                {props.chat_id}
-            </Button>
 
-            <Modal show={show} onHide={handleClose}>
+            <Button variant="outline-secondary" onClick={handleShow}>Add</Button>
+
+
+            <Modal animation={false} show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Modal heading</Modal.Title>
+                    <Modal.Title>Enter Room Details</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form>
                         <Form.Group controlId="formBasicEmail">
-                            <Form.Label>Email address</Form.Label>
-                            <Form.Control type="email" placeholder="Enter email" />
+                            <Form.Label>Enter Room Name</Form.Label>
+                            <Form.Control type="text" placeholder="Enter Room Name" onChange={handleChangeRoomName} />
                             <Form.Text className="text-muted">
-                                We'll never share your email with anyone else.
-    </Form.Text>
+                                Use this name for your privacy.
+                        </Form.Text>
                         </Form.Group>
 
                         <Form.Group controlId="formBasicPassword">
                             <Form.Label>Password</Form.Label>
-                            <Form.Control type="password" placeholder="Password" />
+                            <Form.Control type="password" placeholder="Password" onChange={handleChangeRoomPassword} />
                         </Form.Group>
-                        <Form.Group controlId="formBasicCheckbox">
+                        {/* <Form.Group controlId="formBasicCheckbox">
                             <Form.Check type="checkbox" label="Check me out" />
-                        </Form.Group>
-                        <Button variant="primary" type="submit">
-                            Submit
-  </Button>
+                        </Form.Group> */}
+
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleClose}>
                         Close
             </Button>
-                    <Button variant="primary" onClick={handleClose}>
+                    <Button variant="primary" onClick={handleSaveChanges}>
                         SaveChanges
             </Button>
                 </Modal.Footer>

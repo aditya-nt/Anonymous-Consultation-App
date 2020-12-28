@@ -7,6 +7,10 @@ Card{
     padding: 20px;
 }
 
+h2{
+  color: #808b8c;
+}
+
 p{
     background-color: aqua;
 }
@@ -57,19 +61,36 @@ ul{
   padding: 10px;
   list-style-type: none;
   /* border: 1px solid white; */
-  position:absolute;                  /* added */
-  bottom:30px;
+  position:absolute;  
+  bottom:40px;
   right: 20px;
   left: 20px;
+  
+  height: 100%;
+  -webkit-overflow-scrolling: touch;
+  overflow:auto;
+
+  display: flex;
+  flex-direction: column-reverse;
+  -moz-overflow-scrolling: touch;
 }
 
-ul .leftL{
+
+ ul::-webkit-scrollbar { 
+  width: 0 !important;
+  display: none; 
+}
+
+
+ul .rightL{
  display: flex;
 align-items: flex-end;
 justify-content: flex-end;
+  margin-left: 100px;
 
 }
-ul .rightL{
+ul .leftL{
   display: flex;
   align-items: flex-end;
+  margin-right: 100px;
 }
