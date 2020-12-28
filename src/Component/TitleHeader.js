@@ -9,7 +9,8 @@ class TitleHeader extends Component {
     render() {
         return (
             <Row style={{ "display": "grid" }}><h2 style={{ "textAlign": "center" }}>
-                Kaaya {this.props.extra}
+                Kaaya 
+                
           </h2></Row>
         );
     }

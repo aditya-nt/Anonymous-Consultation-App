@@ -14,9 +14,9 @@ Col{
     background-color: violet;
 }
 .list-group {
-  max-height: 594px;
+  max-height: 542px;
   height: 100%;
-  background-color: #007bff;
+  background-color: #3768b5;
   margin-bottom: 10px;
   overflow:auto;
   -webkit-overflow-scrolling: touch;
@@ -47,8 +47,29 @@ Col{
   /* border: 1px solid white; */
 
   display: table-cell;
-  vertical-align: bottom;
+  vertical-align: top;
   flex: 2;
   background: #474747;
   border-radius: 5px 5px 0px 0px;
+}
+
+ul{
+  padding: 10px;
+  list-style-type: none;
+  /* border: 1px solid white; */
+  position:absolute;                  /* added */
+  bottom:30px;
+  right: 20px;
+  left: 20px;
+}
+
+ul .leftL{
+ display: flex;
+align-items: flex-end;
+justify-content: flex-end;
+
+}
+ul .rightL{
+  display: flex;
+  align-items: flex-end;
 }
