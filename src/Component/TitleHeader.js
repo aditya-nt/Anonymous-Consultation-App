@@ -1,17 +1,29 @@
 import React, { Component } from 'react';
-import { Row , Button} from "react-bootstrap";
+import { Row } from "react-bootstrap";
+import AdminUnlockModal from "./AdminUnlockModal";
 
 
 class TitleHeader extends Component {
+
+    constructor(props){
+        super(props);
+        this.clickFunction = this.clickFunction.bind(this);
+    }
+
+    clickFunction(){
+        this.props.onClick();
+    }
     
     render() {
+
+        var color = (this.props.adminOverride === true )? "red" : "blue";
+
+
         return (
             <Row style={{ "position": "relative",display : 'grid' }}><h2 style={{ "textAlign": "center" }}>
-                CHAT-ANT
-                
+                CHAT-ANT               
           </h2>
-          
-          <Button variant="outline-secondary" style={{position : 'absolute', right : '15px'}}>Admin Unlock</Button>
+          <AdminUnlockModal onClick={this.clickFunction} adminOverride={this.props.adminOverride}/>
           </Row>
         );
     }
