@@ -12,54 +12,102 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            itemsToDisplay : [],
+            dict: {},
             messages: [],
+            searches : [],
             chatMessages: [],
-            chatRoomName: "Unlock this chat",
+            chatRoomName: "Unlock a ChatRoom first",
             current_id: 0,
         };
         // <- set up react state
         this.handleClick = this.handleClick.bind(this);
         this.getChatMessages = this.getChatMessages.bind(this);
         this.addMessage = this.addMessage.bind(this);
+        this.addChat = this.addChat.bind(this);
+        this.handleChangeRoomSearch = this.handleChangeRoomSearch.bind(this);
+        this.searchChatRooms = this.searchChatRooms.bind(this);
+        this.getChatRooms = this.getChatRooms.bind(this);
     }
 
 
+    async searchChatRooms(){
 
 
-    componentDidMount() {
+        var strSearch =  document.getElementById("SearchInput").value;
+        var strlength = strSearch.length;
+        var strFrontCode = strSearch.slice(0, strlength-1);
+        var strEndCode = strSearch.slice(strlength-1, strSearch.length);
+
+        var endcode= strFrontCode + String.fromCharCode(strEndCode.charCodeAt(0) + 1);
+
+        const arr = []
+
+        await fire.firestore().collection("Questions")
+        .where('roomName', '>=', strSearch)
+        .where('roomName', '<', endcode)
+        .get().then(function(querySnapshot) {
+            querySnapshot.forEach(function(doc) {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(doc.id, " => ", doc.data());
+                const eventData = {
+                    id: doc.id,
+                    text: doc.data().roomName,
+                    password: doc.data().roomPassword
+                }
+                arr.push(eventData);
+            });
+        });
+
+        console.log(arr);
+        this.setState({ itemsToDisplay :arr });
+        console.log(this.state.itemsToDisplay);
+    
+
+    
+    }
+
+    getChatRooms(){
+
         /* Create reference to messages in Firebase Database */
-
-        fire.firestore().collection("Questions")
+        fire.firestore().collection("Questions").limit(2)
             .onSnapshot(querySnapshot => {
                 const data = querySnapshot.docs.map(function (doc) {
                     const eventData = {
                         id: doc.id,
                         text: doc.data().roomName,
-                        password : doc.data().roomPassword
+                        password: doc.data().roomPassword
                     }
-
                     return eventData
                 })
 
-                this.setState({ messages: data }); // array of cities objects
-            });
+                var dicto = {};
+                querySnapshot.docs.forEach(function (doc) {
+                    dicto[doc.id] = "locked";
+                })
 
+                this.setState({ messages: data,itemsToDisplay :data });
+            });
     }
 
-    // addChatRoom(e){
-    //     console.log(4);
-    //     // return <Example/>
-    // }
+    componentDidMount() {
+        this.getChatRooms(); 
+        // this.searchChatRooms(); 
+    }
 
-    addMessage(roomName,roomPassword) {
+
+    addMessage(roomName, roomPassword) {
         // e.preventDefault(); // <- prevent form submit from reloading the page
         /* Send the message to Firebase */
         fire.database().ref('messages').push(this.ChatMessageInput.value);
         fire.firestore().collection('Questions').add({
             roomName: roomName,
-            roomPassword : roomPassword,
+            roomPassword: roomPassword,
             timestamp: new Date(Date.now())
         });
+
+        document.getElementById('SearchInput').value = "";
+
 
     }
 
@@ -111,6 +159,14 @@ class App extends Component {
 
                 this.setState({ chatMessages: data }); // array of cities objects
             });
+        this.setState(prevState => {
+            // Taking a copy of the initial filters obj         
+            const { dict } = prevState;
+            // Updating it's property as per the key, value pair retrieved (key being the filter, value being "on" or "off")        
+            dict[this.state.current_id] = "unlocked";
+            // Returning the updated object         
+            return { dict };
+        })
 
     }
 
@@ -127,19 +183,19 @@ class App extends Component {
                                 <FormControl
                                     placeholder="Type to search"
                                     aria-label="Recipient's username"
-                                    aria-describedby="basic-addon2" ref={el => this.ChatRoomInput = el}
+                                    aria-describedby="basic-addon2" id="SearchInput" onChange={this.handleChangeRoomSearch} ref={el => this.ChatRoomInput = el}
                                 />
                                 <InputGroup.Append>
 
                                     {/* <Button variant="outline-secondary" onClick={this.addChatRoom.bind(this)}>Seach</Button> */}
-                                    <Button variant="outline-secondary">Search</Button>
-                                    <Example onCreateRoom={this.addMessage}/>
+                                    <Button variant="outline-secondary" onClick={this.searchChatRooms}>Search</Button>
+                                    <Example onCreateRoom={this.addMessage} />
                                 </InputGroup.Append>
                             </InputGroup>
                             <ListGroup>
                                 {
-                                    this.state.messages.map(message =>
-                                        <RoomPasswordModal onClick={this.handleClick} id={message.id} val={message.text} pass={message.password}/>)
+                                    this.state.itemsToDisplay.map(message =>
+                                        <RoomPasswordModal onClick={this.handleClick} id={message.id} val={message.text} pass={message.password} status={this.state.dict[message.id]} />)
                                 }
                             </ListGroup>
                         </Col>
@@ -149,7 +205,7 @@ class App extends Component {
                                 {/* <Example chat_id={this.state.chatRoomName} /> */}
 
                                 <ul>
-                                    
+
                                     {
                                         this.state.chatMessages.map(chatMessage => {
                                             var class_name = (chatMessage.Sender === this.state.chatRoomName) ? "rightL" : "leftL";
@@ -163,7 +219,7 @@ class App extends Component {
                                         })
                                     }
                                     <li  >
-                                        <Alert variant="success">
+                                        <Alert variant="success" style={{textAlign: "center"}}>
                                             Happy Chatting!!
                                                 </Alert>
                                     </li>
@@ -175,7 +231,7 @@ class App extends Component {
                             <div className="input-container">
                                 <InputGroup className="mb-3">
                                     <FormControl
-                                        placeholder={this.state.chatRoomName+" : Type your message"}
+                                        placeholder={this.state.chatRoomName + " : Type your message"}
                                         aria-label="Recipient's username"
                                         aria-describedby="basic-addon2" ref={el => this.ChatMessageInput = el}
                                     />
@@ -192,6 +248,26 @@ class App extends Component {
 
         );
     }
+
+
+
+    handleChangeRoomSearch = () => {
+        const selected = document.getElementById("SearchInput").value;
+        let itemsToDisplay = [];
+
+    
+        if (selected === ""){
+          this.setState({ itemsToDisplay: [...this.state.messages] });
+        }
+        else {
+          itemsToDisplay = this.state.messages.filter(item =>
+            item.text.toLowerCase().includes(selected.toLowerCase())
+          );
+          this.setState({ itemsToDisplay });
+        }
+    };
+
+
 }
 
 export default App;

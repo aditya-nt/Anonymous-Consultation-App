@@ -7,11 +7,11 @@ class TitleHeader extends Component {
     render() {
         return (
             <Row style={{ "position": "relative",display : 'grid' }}><h2 style={{ "textAlign": "center" }}>
-                KAAYA
+                CHAT-ANT
                 
           </h2>
           
-          <Button variant="outline-secondary" style={{position : 'absolute', right : '15px'}}>Unlock</Button>
+          <Button variant="outline-secondary" style={{position : 'absolute', right : '15px'}}>Admin Unlock</Button>
           </Row>
         );
     }
