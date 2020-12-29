@@ -42,7 +42,7 @@ function Example(props) {
                     <Form>
                         <Form.Group controlId="formBasicEmail">
                             <Form.Label>Enter Room Name</Form.Label>
-                            <Form.Control type="text" placeholder="Enter Room Name" onChange={handleChangeRoomName} />
+                            <Form.Control type="text" placeholder="Enter Room Name"  maxLength="18" autoComplete="Null" onChange={handleChangeRoomName} />
                             <Form.Text className="text-muted">
                                 Use this name for your privacy.
                         </Form.Text>
@@ -50,7 +50,7 @@ function Example(props) {
 
                         <Form.Group controlId="formBasicPassword">
                             <Form.Label>Password</Form.Label>
-                            <Form.Control type="password" placeholder="Password" onChange={handleChangeRoomPassword} />
+                            <Form.Control type="password" placeholder="Password"  autoComplete="Null" onChange={handleChangeRoomPassword} />
                         </Form.Group>
                         {/* <Form.Group controlId="formBasicCheckbox">
                             <Form.Check type="checkbox" label="Check me out" />

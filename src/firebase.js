@@ -1,5 +1,12 @@
-import  firebase  from "firebase";
+import  firebase  from "firebase/app";
 
+
+// import 'firebase/auth';        // for authentication
+// import 'firebase/storage';     // for storage
+// import 'firebase/database';    // for realtime database
+import 'firebase/firestore';   // for cloud firestore
+// import 'firebase/messaging';   // for cloud messaging
+// import 'firebase/functions';   // for cloud functions
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
     apiKey: "AIzaSyByPNLtfNCi-g5eg91Mcrgfy_KIqrp_s3g",

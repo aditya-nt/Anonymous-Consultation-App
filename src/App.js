@@ -40,11 +40,11 @@ class App extends Component {
                 adminOverride : true
             });
         }
-        else{{
+        else{
             this.setState({
                 adminOverride : false
             });
-        }}
+        }
 
 
     }
@@ -110,7 +110,6 @@ class App extends Component {
     addChatRoom(roomName, roomPassword) {
         // e.preventDefault(); // <- prevent form submit from reloading the page
         /* Send the message to Firebase */
-        fire.database().ref('messages').push(this.ChatMessageInput.value);
         fire.firestore().collection('Questions').add({
             roomName: roomName,
             roomPassword: roomPassword,
@@ -191,7 +190,7 @@ class App extends Component {
                     <TitleHeader extra={this.state.chatRoomName} onClick={this.toggleAdminOverride} adminOverride={this.state.adminOverride}></TitleHeader>
 
                     <Row style={{ "height": "100%" }}>
-                        <Col className="SideContainerLeft" >
+                        <Col className="SideContainerLeft d-none d-md-block" >
                             <InputGroup className="mb-3">
                                 <FormControl
                                     placeholder="Type to search"
@@ -213,7 +212,7 @@ class App extends Component {
                             </ListGroup>
                         </Col>
 
-                        <Col className="SideContainerRight" xs={8} style={{ "overflow": "hidden" }}>
+                        <Col className="SideContainerRight" md={8} style={{ "overflow": "hidden" }}>
                             <div className="ChatSpace">
                                 {/* <Example chat_id={this.state.chatRoomName} /> */}
 
@@ -224,7 +223,7 @@ class App extends Component {
                                             var class_name = (chatMessage.Sender === this.state.chatRoomName) ? "rightL" : "leftL";
                                             var variant = (chatMessage.Sender === this.state.chatRoomName) ? "dark" : "primary";
 
-                                            return <li className={class_name}>
+                                            return <li key={chatMessage.id} className={class_name}>
                                                 <Alert variant={variant} style={{ paddingTop: "5px", paddingBottom: "5px", display: 'inline-block' }}>
                                                     {chatMessage.ChatText}
                                                 </Alert>

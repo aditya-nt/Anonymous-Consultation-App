@@ -16,7 +16,6 @@ class TitleHeader extends Component {
     
     render() {
 
-        var color = (this.props.adminOverride === true )? "red" : "blue";
 
 
         return (
