@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { Row, Col, Card, ListGroup, Button, InputGroup, FormControl, Alert } from "react-bootstrap";
-import RoomPasswordModal from "./Component/RoomPasswordModal";
-import Example from './Component/Example';
+import { Row, Col, Card, ListGroup, Button, InputGroup, FormControl } from "react-bootstrap";
+
 import fire from './firebase';
 import TitleHeader from "./Component/TitleHeader";
-// import ChatInput from "./Component/ChatInput";
+import ChatContainer from "./Component/ChatContainer";
 import "./App.css";
+import RoomContainer from './Component/RoomContainer';
 
 
 class App extends Component {
@@ -25,7 +25,7 @@ class App extends Component {
         this.handleClick = this.handleClick.bind(this);
         this.getChatMessages = this.getChatMessages.bind(this);
         this.addChatRoom = this.addChatRoom.bind(this);
-        this.addChat = this.addChat.bind(this);
+        this.addChatMessage = this.addChatMessage.bind(this);
         this.handleChangeRoomSearch = this.handleChangeRoomSearch.bind(this);
         this.searchChatRooms = this.searchChatRooms.bind(this);
         this.getChatRooms = this.getChatRooms.bind(this);
@@ -33,8 +33,12 @@ class App extends Component {
     }
 
 
-    toggleAdminOverride= (...args) => {
 
+    componentDidMount() {
+        this.getChatRooms(); 
+    }
+
+    toggleAdminOverride= (...args) => {
         if(this.state.adminOverride === false){
             this.setState({
                 adminOverride : true
@@ -45,43 +49,25 @@ class App extends Component {
                 adminOverride : false
             });
         }
-
-
     }
 
-    async searchChatRooms(){
+    
+    
+    
 
-        var strSearch =  document.getElementById("SearchInput").value;
-        var strlength = strSearch.length;
-        var strFrontCode = strSearch.slice(0, strlength-1);
-        var strEndCode = strSearch.slice(strlength-1, strSearch.length);
 
-        var endcode= strFrontCode + String.fromCharCode(strEndCode.charCodeAt(0) + 1);
-
-        const arr = []
-
-        await fire.firestore().collection("Questions")
-        .where('roomName', '>=', strSearch)
-        .where('roomName', '<', endcode)
-        .get().then(function(querySnapshot) {
-            querySnapshot.forEach(function(doc) {
-                // doc.data() is never undefined for query doc snapshots
-                // console.log(doc.id, " => ", doc.data());
-                const eventData = {
-                    id: doc.id,
-                    text: doc.data().roomName,
-                    password: doc.data().roomPassword
-                }
-                arr.push(eventData);
-            });
+    addChatRoom(roomName, roomPassword) {
+        fire.firestore().collection('Questions').add({
+            roomName: roomName,
+            roomPassword: roomPassword,
+            timestamp: new Date(Date.now()),
+            lastActive :  new Date(Date.now())
         });
-
-        this.setState({ itemsToDisplay :arr });  
+        document.getElementById('SearchInput').value = "";
     }
 
     getChatRooms(){
-        /* Create reference to messages in Firebase Database */
-        fire.firestore().collection("Questions").orderBy("lastActive", "desc").limit(25)
+        fire.firestore().collection("Questions").orderBy("lastActive", "desc").limit(5)
             .onSnapshot(querySnapshot => {
                 const data = querySnapshot.docs.map(function (doc) {
                     const eventData = {
@@ -101,60 +87,44 @@ class App extends Component {
             });
     }
 
-    componentDidMount() {
-        this.getChatRooms(); 
-        // this.searchChatRooms(); 
-    }
+    async searchChatRooms(){
+        var strSearch =  document.getElementById("SearchInput").value;
+        var strlength = strSearch.length;
+        var strFrontCode = strSearch.slice(0, strlength-1);
+        var strEndCode = strSearch.slice(strlength-1, strSearch.length);
+        var endcode= strFrontCode + String.fromCharCode(strEndCode.charCodeAt(0) + 1);
 
-
-    addChatRoom(roomName, roomPassword) {
-        // e.preventDefault(); // <- prevent form submit from reloading the page
-        /* Send the message to Firebase */
-        fire.firestore().collection('Questions').add({
-            roomName: roomName,
-            roomPassword: roomPassword,
-            timestamp: new Date(Date.now()),
-            lastActive :  new Date(Date.now())
+        const arr = []
+        await fire.firestore().collection("Questions")
+        .where('roomName', '>=', strSearch)
+        .where('roomName', '<', endcode)
+        .get().then(function(querySnapshot) {
+            querySnapshot.forEach(function(doc) {
+                const eventData = {
+                    id: doc.id,
+                    text: doc.data().roomName,
+                    password: doc.data().roomPassword
+                }
+                arr.push(eventData);
+            });
         });
-
-        document.getElementById('SearchInput').value = "";
-
+        this.setState({ itemsToDisplay :arr });  
     }
 
-    addChat(e) {
-        e.preventDefault(); // <- prevent form submit from reloading the page
-        /* Send the message to Firebase */
-        // fire.database().ref('messages').push(this.ChatMessageInput.value);
+
+    addChatMessage(e) {
         var path = 'Questions/' + this.state.current_id + '/Chat';
         var Sender = (this.state.adminOverride === false) ? this.state.chatRoomName : "Admin";
         fire.firestore().collection(path).add({
             Sender: Sender,
-            ChatText: this.ChatMessageInput.value,
+            ChatText: e,
             timestamp: new Date(Date.now())
         });
         fire.firestore().collection('Questions').doc(this.state.current_id).update({lastActive : new Date(Date.now())});
-        this.ChatMessageInput.value = ''; // <- clear the input
     }
-
-    handleChange = (no, id) => {
-        this.setState({
-            chatRoomName: no,
-            current_id: id
-        });
-    }
-
-
-    handleClick = async (no, id) => {
-        await this.handleChange(no, id);
-        this.getChatMessages();
-    }
-
-
 
     getChatMessages() {
-
         var path = 'Questions/' + this.state.current_id + '/Chat';
-
 
         fire.firestore().collection(path).orderBy("timestamp", "desc")//.limit(7)
             .onSnapshot(querySnapshot => {
@@ -178,96 +148,22 @@ class App extends Component {
             dict[this.state.current_id] = "unlocked";
             // Returning the updated object         
             return { dict };
-        })
-
+        });
     }
 
 
-    render() {
-        return (
-            <div className="container" style={{ "height": "100%" }}>
-                <Card style={{ "overflow": "hidden", "height": "700px", "borderRadius": "10px", "padding": "20px", "backgroundColor": "#2A2F32", "color": "white", "margin": "20px" }}>
-                    <TitleHeader extra={this.state.chatRoomName} onClick={this.toggleAdminOverride} adminOverride={this.state.adminOverride}></TitleHeader>
-
-                    <Row style={{ "height": "100%" }}>
-                        <Col className="SideContainerLeft d-none d-md-block" >
-                            <InputGroup className="mb-3">
-                                <FormControl
-                                    placeholder="Type to search"
-                                    aria-label="Recipient's username"
-                                    aria-describedby="basic-addon2" id="SearchInput" onChange={this.handleChangeRoomSearch} ref={el => this.ChatRoomInput = el}
-                                />
-                                <InputGroup.Append>
-
-                                    {/* <Button variant="outline-secondary" onClick={this.addChatRoom.bind(this)}>Seach</Button> */}
-                                    <Button variant="outline-secondary" onClick={this.searchChatRooms}>Search</Button>
-                                    <Example onCreateRoom={this.addChatRoom} />
-                                </InputGroup.Append>
-                            </InputGroup>
-                            <ListGroup>
-                                {
-                                    this.state.itemsToDisplay.map(message =>
-                                        <RoomPasswordModal adminOverride={this.state.adminOverride} onClick={this.handleClick} key={message.id} id={message.id} val={message.text} pass={message.password} status={this.state.dict[message.id]} />)
-                                }
-                            </ListGroup>
-                        </Col>
-
-                        <Col className="SideContainerRight" md={8} style={{ "overflow": "hidden" }}>
-                            <div className="ChatSpace">
-                                {/* <Example chat_id={this.state.chatRoomName} /> */}
-
-                                <ul>
-
-                                    {
-                                        this.state.chatMessages.map(chatMessage => {
-                                            var class_name = (chatMessage.Sender === this.state.chatRoomName) ? "rightL" : "leftL";
-                                            var variant = (chatMessage.Sender === this.state.chatRoomName) ? "dark" : "primary";
-
-                                            return <li key={chatMessage.id} className={class_name}>
-                                                <Alert variant={variant} style={{ paddingTop: "5px", paddingBottom: "5px", display: 'inline-block' }}>
-                                                    {chatMessage.ChatText}
-                                                </Alert>
-                                            </li>
-                                        })
-                                    }
-                                    <li  >
-                                        <Alert variant="success" style={{textAlign: "center"}}>
-                                            Happy Chatting!!
-                                                </Alert>
-                                    </li>
-                                </ul>
-                            </div>
-
-                            {/* <ChatInput/> */}
-
-                            <div className="input-container">
-                                <InputGroup className="mb-3">
-                                    <FormControl
-                                        placeholder={this.state.chatRoomName + " : Type your message"}
-                                        aria-label="Recipient's username"
-                                        aria-describedby="basic-addon2" ref={el => this.ChatMessageInput = el}
-                                    />
-                                    <InputGroup.Append>
-                                        <Button variant="outline-secondary" onClick={this.addChat.bind(this)}>Send</Button>
-                                    </InputGroup.Append>
-                                </InputGroup>
-                            </div>
-
-                        </Col>
-                    </Row>
-                </Card>
-            </div >
-
-        );
+    handleClick = async (no, id) => {
+        await this.setState({
+            chatRoomName: no,
+            current_id: id
+        });
+        this.getChatMessages();
     }
-
-
 
     handleChangeRoomSearch = () => {
         const selected = document.getElementById("SearchInput").value;
         let itemsToDisplay = [];
 
-    
         if (selected === ""){
           this.setState({ itemsToDisplay: [...this.state.messages] });
         }
@@ -280,6 +176,24 @@ class App extends Component {
     };
 
 
+
+    render() {
+        return (
+            <div className="container" style={{ "height": "100%" }}>
+                <Card style={{ "overflow": "hidden", "height": "700px", "borderRadius": "10px", "padding": "20px", "backgroundColor": "#2A2F32", "color": "white", "margin": "20px" }}>
+                    <TitleHeader extra={this.state.chatRoomName} onClick={this.toggleAdminOverride} adminOverride={this.state.adminOverride}></TitleHeader>
+
+                    <Row style={{ "height": "100%" }}>
+                        <RoomContainer myState={this.state} onClick={this.handleClick} onChange={this.handleChangeRoomSearch} onCreateRoom={this.addChatRoom} onSearchChatRooms={this.searchChatRooms}/>
+
+                        <ChatContainer myState={this.state} onClick={this.addChatMessage} />
+
+                    </Row>
+                </Card>
+            </div >
+
+        );
+    }
 }
 
 export default App;
