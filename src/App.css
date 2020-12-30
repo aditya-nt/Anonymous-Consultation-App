@@ -28,10 +28,6 @@ Col{
 
 .list-group::-webkit-scrollbar {display:none;}
 
-.SideContainerLeft{
-  /* border: 1px solid white; */
-
-}
 
 .ChatContainer {
   padding: 0;
@@ -42,9 +38,6 @@ Col{
   justify-content: space-between;
   flex-direction: column;
   flex-flow: column;
-}
-.input-container {
- 
 }
 
 .ChatSpace  {

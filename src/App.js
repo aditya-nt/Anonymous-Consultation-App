@@ -185,9 +185,7 @@ class App extends Component {
 
                     <Row style={{ "height": "100%" }}>
                         <RoomContainer myState={this.state} onClick={this.handleClick} onChange={this.handleChangeRoomSearch} onCreateRoom={this.addChatRoom} onSearchChatRooms={this.searchChatRooms}/>
-
                         <ChatContainer myState={this.state} onClick={this.addChatMessage} />
-
                     </Row>
                 </Card>
             </div >
