@@ -13,11 +13,7 @@ class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-
-            roomChoose : true,
-
-
-
+            roomChoose: true,
             itemsToDisplay: [],
             dict: {},
             messages: [],
@@ -75,7 +71,7 @@ class App extends Component {
     }
 
     getChatRooms() {
-        fire.firestore().collection("Questions").orderBy("lastActive", "desc").limit(5)
+        fire.firestore().collection("Questions").orderBy("lastActive", "desc").limit(15)
             .onSnapshot(querySnapshot => {
                 const data = querySnapshot.docs.map(function (doc) {
                     const eventData = {
@@ -97,6 +93,11 @@ class App extends Component {
 
     async searchChatRooms() {
         var strSearch = document.getElementById("SearchInput").value;
+
+        if (strSearch === "") {
+            return;
+        }
+
         var strlength = strSearch.length;
         var strFrontCode = strSearch.slice(0, strlength - 1);
         var strEndCode = strSearch.slice(strlength - 1, strSearch.length);
@@ -169,10 +170,10 @@ class App extends Component {
         this.handleRoomContainerToggle();
     }
 
-    handleRoomContainerToggle = () =>{
+    handleRoomContainerToggle = () => {
         this.setState(prevState => ({
-            roomChoose: !prevState.roomChoose 
-          }));
+            roomChoose: !prevState.roomChoose
+        }));
 
     }
 

@@ -1,12 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
+// import DataEntry from './dataEntry';
+import TreeData from './TreeData';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { BrowserRouter,Route } from "react-router-dom";
+
+
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  <BrowserRouter>
+    <Route exact path="/" component={App}></Route>
+    <Route path="/dataEntry" component={TreeData}></Route>
+  </BrowserRouter>,
   document.getElementById('root')
 );
 

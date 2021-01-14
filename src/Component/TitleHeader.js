@@ -3,7 +3,7 @@ import { Row } from "react-bootstrap";
 import { Button } from "react-bootstrap";
 import { ArrowLeft } from 'react-bootstrap-icons';
 import AdminUnlockModal from "./AdminUnlockModal";
-import FontAwesome, { FontAwesomeSize } from "react-fontawesome";
+import FontAwesome from "react-fontawesome";
 import logo  from "../logo2.png";
 
 
@@ -25,7 +25,7 @@ class TitleHeader extends Component {
         return (
             <Row style={{ "position": "relative",display : 'grid' }}><h2 style={{ "textAlign": "center" }}>
             <Button variant= "outline-secondary" onClick={this.props.onBack} style={{ position: 'absolute', left: '15px' , padding : '3px 8px 6px 8px' }}><ArrowLeft/></Button>
-            <div style={{  display: 'flex' ,justifyContent: 'center'}} ><img src={logo} style={{ width: '30px' , height : '30px' , marginBottom : '20px'}}></img>    
+            <div style={{  display: 'flex' ,justifyContent: 'center'}} ><img alt="Logo" src={logo} style={{ width: '30px' , height : '30px' , marginBottom : '20px'}}></img>    
                 <FontAwesome >Chat-ant</FontAwesome> 
                 </div>          
           </h2>
