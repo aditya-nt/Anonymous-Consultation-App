@@ -1,4 +1,4 @@
-##Anonymous Consultation App
+## Anonymous Consultation App
 
 Live Demo : https://kaaya-cd49c.web.app/
 
@@ -18,6 +18,6 @@ Process if consultant:
 
 
 
-### Getting Started with Create React App
-### `npm start`
-### Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Getting Started with Create React App
+ `npm start`
+ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
