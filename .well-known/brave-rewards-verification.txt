@@ -1,0 +1,4 @@
+This is a Brave Rewards publisher verification file.
+
+Domain: kaaya-cd49c.web.app
+Token: 3f1cb1595bc4629a2ff150d862b2127e3327207aad817c6a0c18178e48642982
